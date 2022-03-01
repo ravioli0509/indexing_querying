@@ -1,0 +1,23 @@
+name: test-ci
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test-platform:
+    runs-on: ubuntu-latest
+  
+  deploy:
+    needs: build-and-test-platform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Copy repository to cloud
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: "./"
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          remote: "~/"
+          key: ${{ secrets.KEY }}
