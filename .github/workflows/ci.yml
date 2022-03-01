@@ -4,18 +4,29 @@ on: [push, pull_request]
 
 jobs:  
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
 
-      - name: Copy repository to cloud
-        uses: appleboy/scp-action@master
-        env:
-          HOST: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PORT: ${{ secrets.PORT }}
-          KEY: ${{ secrets.KEY }}
+      # - name: Copy repository to cloud
+      #   uses: appleboy/scp-action@master
+      #   env:
+      #     HOST: ${{ secrets.HOST }}
+      #     USERNAME: ${{ secrets.USERNAME }}
+      #     PORT: ${{ secrets.PORT }}
+      #     KEY: ${{ secrets.KEY }}
+      #   with:
+      #     source: "./"
+      #     target: "~/"
+      #     timeout: "90s"
+
+      - uses: actions/checkout@v2
+      - name: SCP Deploy
+        uses: lBeJIuk/scp_action@v1
         with:
-          source: "./"
-          target: "~/"
-          timeout: "90s"
+          public_key: ${{ secrets.KEY }}
+          ssh_port: ${{ secrets.PORT }}
+          ssh_username: ${{ secrets.USERNAME }}
+          ssh_host: ${{ secrets.HOST }}
+          source: './'
+          target: '/prod/'
